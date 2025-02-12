@@ -3,7 +3,7 @@
 set -euo pipefail
 
 S3_PREFIX="s3://techkitchen-cuisine-development2/matching/batch/"
-WORK_DIR="/tmp/check_matching_results"
+WORK_DIR_BASE="/tmp/check_matching_results"
 
 # 日付を引数から取得、未指定なら前日の日付を設定
 get_target_date() {
@@ -18,6 +18,12 @@ get_target_date() {
     echo "$TARGET_DATE"
 }
 
+get_work_dir() {
+    local target_date="$1"
+
+    echo "${WORK_DIR_BASE:?}/${target_date:?}"
+}
+
 get_prefix() {
     local target_date="$1"
     local prefix_date
@@ -28,12 +34,39 @@ get_prefix() {
 
 download_succeeded_json() {
     local target_date="$1"
-    rm -rf ${WORK_DIR}
-    mkdir -p ${WORK_DIR}
+    local work_dir="$2"
+    rm -rf "${work_dir}"
+    mkdir -p "${work_dir}"
 
     local prefix
     prefix=$(get_prefix "${target_date}")
-    aws s3 sync --profile=dev2 "${prefix}result/" ${WORK_DIR} --exclude "*" --include "*SUCCEEDED_0.json"
+    aws s3 sync --profile=dev2 "${prefix}result/" "${work_dir}" --exclude "*" --include "*SUCCEEDED_0.json"
+
+    cd "${work_dir}"
+    find "${work_dir}" -name 'SUCCEEDED_0.json' | while read -r file; do
+        # 親ディレクトリのパスとUUID部分を取得
+        parent_dir=$(dirname "${file}")
+
+        # JSONファイルに "failed_enterpriseIds" または "failed_candidateIds" が含まれているか確認
+        if grep -q "failed_enterpriseIds" "${file}"; then
+            new_dir="enterprise"
+        elif grep -q "failed_candidateIds" "${file}"; then
+            new_dir="candidate"
+        else
+            echo "No matching keywords in ${file}, skipping..."
+            continue
+        fi
+
+        new_path=$(dirname "${parent_dir}")/${new_dir}
+
+        # すでにディレクトリが存在しない場合のみ移動
+        if [ ! -d "${new_path}" ]; then
+            mv "${parent_dir}" "${new_path}"
+            echo "Renamed ${parent_dir} to ${new_path}"
+        else
+            echo "Directory ${new_path} already exists, skipping..."
+        fi
+    done
 }
 
 main() {
@@ -43,19 +76,20 @@ main() {
     local formatted_date="${target_date:0:4}/${target_date:4:2}/${target_date:6:2}"
     echo "Start download and parse daily batch result of ${formatted_date}"
 
-    download_succeeded_json "${target_date}"
-    find ${WORK_DIR} -name SUCCEEDED_0.json -print0 | while IFS= read -r -d '' file; do
-        # 親ディレクトリ名（UUID）を抽出
-        uuid=$(basename "$(dirname "${file}")")
+    local work_dir
+    work_dir=$(get_work_dir "${target_date}")
+    download_succeeded_json "${target_date}" "${work_dir}"
+    find "${work_dir}" -name SUCCEEDED_0.json -print0 | while IFS= read -r -d '' file; do
+        resource_type=$(basename "$(dirname "${file}")")
 
         count=$(jq . "${file}" | grep 'status\\":500' | sed 's/^ *"Output": *"//' | wc -l)
-        # jq と grep の結果を UUID ごとのファイルに出力
-        jq . "${file}" | grep 'status\\":500' | sed 's/^ *"Output": *"//' | sed 's/",$//' | sed 's#\\##g' | jq . >"${WORK_DIR}/result_${uuid}_${target_date}.log"
+        # jq と grep の結果を resource_type ごとのファイルに出力
+        jq . "${file}" | grep 'status\\":500' | sed 's/^ *"Output": *"//' | sed 's/",$//' | sed 's#\\##g' | jq . >"${work_dir}/${resource_type}_${target_date}.log"
 
-        echo "UUID: ${uuid} - Number of status 500 data: ${count}"
+        printf "%-10s - Number of status 500 data: %d\n" "${resource_type}" "${count}"
     done
-    echo "End download and parse daily batch result successfully"
-    echo "Result detail is under ${WORK_DIR}"
+    echo "End download and parse daily batch result successfully."
+    echo "Detailed result is under ${work_dir}/"
 }
 
 main "$@"
