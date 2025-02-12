@@ -10,6 +10,8 @@ dailyで自動実行されるstep functionの全件マッチング処理結果�
 - 結果取得
   - 前日分取得
     - `check_matching_results.sh`
+      - 注意点
+        - 関連ファイルが出力される作業用ディレクトリ(`/tmp/check_matching_results/`)配下で実行すると正常動作しない
       - 出力例(2025/02/12実行時)
 
           ```txt
