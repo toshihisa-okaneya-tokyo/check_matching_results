@@ -44,9 +44,9 @@ download_succeeded_json() {
         parent_dir=$(dirname "${file}")
 
         # JSONファイルに "failed_enterpriseIds" または "failed_candidateIds" が含まれているか確認
-        if grep -q "failed_enterpriseIds" "${file}"; then
+        if grep -q "enterpriseIds" "${file}"; then
             new_dir="enterprise"
-        elif grep -q "failed_candidateIds" "${file}"; then
+        elif grep -q "candidateIds" "${file}"; then
             new_dir="candidate"
         else
             echo "No matching keywords in ${file}, skipping..."
