@@ -43,7 +43,6 @@ download_succeeded_json() {
         # 親ディレクトリのパスとUUID部分を取得
         parent_dir=$(dirname "${file}")
 
-        # JSONファイルに "failed_enterpriseIds" または "failed_candidateIds" が含まれているか確認
         if grep -q "enterpriseIds" "${file}"; then
             new_dir="enterprise"
         elif grep -q "candidateIds" "${file}"; then
