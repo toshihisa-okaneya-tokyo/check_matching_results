@@ -71,10 +71,10 @@ parse_json() {
     find "${work_dir}" -name SUCCEEDED_0.json -print0 | while IFS= read -r -d '' file; do
         resource_type=$(basename "$(dirname "${file}")")
 
-        count=$(jq . "${file}" | grep 'status\\":500' | sed 's/^ *"Output": *"//' | wc -l)
+        count=$(jq . "${file}" | grep 'status\\":500' | sed 's/^ *"Output": *"//' | wc -l || true)
         # status: 500のログを抽出し、resource_type ごとのファイルに出力
         output_file="${work_dir}/${resource_type}_${target_date}.log"
-        jq . "${file}" | grep 'status\\":500' | sed 's/^ *"Output": *"//' | sed 's/",$//' | sed 's#\\##g' | jq . >"${output_file}"
+        jq . "${file}" | grep 'status\\":500' | sed 's/^ *"Output": *"//' | sed 's/",$//' | sed 's#\\##g' | jq . >"${output_file}" || echo "{}" >"${output_file}"
 
         printf "%-10s - Number of status 500 data: %d\n" "${resource_type}" "${count}"
     done
