@@ -27,7 +27,12 @@ get_work_dir() {
 get_prefix() {
     local target_date="$1"
     local prefix_date
-    prefix_date=$(aws s3 ls --profile=dev2 "${S3_PREFIX}${target_date}"_ | awk '{print $2}')
+    local result_count
+    result_count=$(aws s3 ls --profile=dev2 "${S3_PREFIX}${target_date}"_ | wc -l)
+    if [ "$result_count" -gt 1 ]; then
+        echo -e "\e[31m** Step Function executed more than 2 times. Old results will be ignored. **\e[0m" >&2
+    fi
+    prefix_date=$(aws s3 ls --profile=dev2 "${S3_PREFIX}${target_date}"_ | awk '{print $2}' | head -1)
 
     echo "${S3_PREFIX}${prefix_date}"
 }
@@ -37,15 +42,15 @@ download_succeeded_json() {
     local work_dir="$2"
     local prefix
     prefix=$(get_prefix "${target_date}")
-    aws s3 sync --profile=dev2 "${prefix}result/" "${work_dir}" --exclude "*" --include "*SUCCEEDED_0.json"
+    aws s3 sync --profile=dev2 "${prefix}result/" "${work_dir}"
 
-    find "${work_dir}" -name 'SUCCEEDED_0.json' | while read -r file; do
+    find "${work_dir}" -name 'manifest.json' | while read -r file; do
         # 親ディレクトリのパスとUUID部分を取得
         parent_dir=$(dirname "${file}")
 
-        if grep -q "enterpriseIds" "${file}"; then
+        if grep -q "Map-OneEnterprisevsManyCandidates" "${file}"; then
             new_dir="enterprise"
-        elif grep -q "candidateIds" "${file}"; then
+        elif grep -q "Map-OneCandidatevsManyEnterprises" "${file}"; then
             new_dir="candidate"
         else
             echo "No matching keywords in ${file}, skipping..."
