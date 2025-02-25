@@ -36,3 +36,8 @@ dailyで自動実行されるstep functionの全件マッチング処理結果�
       - 例
         - `check_matching_results.sh 0210`
       - 日付指定以外はオプションなしの場合と同様の挙動
+
+## 関連情報
+
+- jsonを出力するstep functionのログが必要な場合はaws console参照
+  - `https://ap-northeast-1.console.aws.amazon.com/states/home?region=ap-northeast-1#/statemachines/view/arn%3Aaws%3Astates%3Aap-northeast-1%3A009160044068%3AstateMachine%3Acuisine_batch_step_functions?type=standard`
