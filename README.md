@@ -36,6 +36,11 @@ dailyで自動実行されるstep functionの全件マッチング処理結果�
       - 例
         - `check_matching_results.sh 0210`
       - 日付指定以外はオプションなしの場合と同様の挙動
+- 目検での確認手順(status 500があった場合)
+  - データ構造が異常でないか確認
+    - candidatesの場合
+      - rawSkill回答しているのに、WorkStyle未回答で0Hopも未設定
+      - desiredWorkPrefecturesが空
 
 ## 関連情報
 
