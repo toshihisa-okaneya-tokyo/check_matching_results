@@ -37,12 +37,20 @@ dailyで自動実行されるstep functionの全件マッチング処理結果�
         - `check_matching_results.sh 0210`
       - 日付指定以外はオプションなしの場合と同様の挙動
 - 目検での確認手順(status 500があった場合)
-  - データ構造が異常でないか確認
+  - 当該matchingResourceのデータ構造が異常でないか確認
     - candidatesの場合
       - rawSkill回答しているのに、WorkStyle未回答で0Hopも未設定
       - desiredWorkPrefecturesが空
     - enterpriseの場合
       - workPrefecturesが東京都以外
+  - 上記で確認出来ない場合
+    - `s3://techkitchen-cuisine-development2/matching/batch/(日付)/root_jobs.json`をダウンロード
+    - 例
+      - `s3://techkitchen-cuisine-development2/matching/batch/20250227_150345/root_jobs.json`
+    - fail後にデータが変更されていないことを確認
+      - root_jobs.jsonとdev2 mongo上の当該matchingResourceのrevisionに差分がないことを確認
+    - 担当者に当該matchingResourceのexpandedデータを連携して確認依頼
+      - test_create_expand_resource.py で生成
 
 ## 関連情報
 
