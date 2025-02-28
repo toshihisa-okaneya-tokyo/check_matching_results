@@ -41,6 +41,8 @@ dailyで自動実行されるstep functionの全件マッチング処理結果�
     - candidatesの場合
       - rawSkill回答しているのに、WorkStyle未回答で0Hopも未設定
       - desiredWorkPrefecturesが空
+    - enterpriseの場合
+      - workPrefecturesが東京都以外
 
 ## 関連情報
 
