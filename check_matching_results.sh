@@ -28,12 +28,12 @@ get_prefix() {
     local target_date="$1"
     local prefix_date
     local result_count
-    result_count=$(aws s3 ls --profile=dev2 "${S3_PREFIX}${target_date}"_ | wc -l)
+    result_count=$(aws s3 ls --profile=dev2 "${S3_PREFIX}${target_date}_" | wc -l)
     # データ更新等で1日に2回以上step functionが実行されていた場合、古い方の結果は無視
     if [ "$result_count" -gt 1 ]; then
         echo -e "\e[31m** Step Function executed more than 2 times. Old results will be ignored. **\e[0m" >&2
     fi
-    prefix_date=$(aws s3 ls --profile=dev2 "${S3_PREFIX}${target_date}"_ | awk '{print $2}' | head -1)
+    prefix_date=$(aws s3 ls --profile=dev2 "${S3_PREFIX}${target_date}_" | awk '{print $2}' | tail -1)
 
     echo "${S3_PREFIX}${prefix_date}"
 }
