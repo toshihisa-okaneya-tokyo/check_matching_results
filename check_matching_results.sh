@@ -38,7 +38,7 @@ get_prefix() {
     echo "${S3_PREFIX}${prefix_date}"
 }
 
-download_succeeded_json() {
+download_result_files() {
     local target_date="$1"
     local work_dir="$2"
     local prefix
@@ -97,7 +97,7 @@ main() {
     rm -rf "${work_dir}"
     mkdir -p "${work_dir}"
     cd "${work_dir}"
-    download_succeeded_json "${target_date}" "${work_dir}"
+    download_result_files "${target_date}" "${work_dir}"
     parse_json "${work_dir}"
 
     echo "End download and parse daily batch result successfully."
