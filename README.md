@@ -52,7 +52,7 @@ dailyで自動実行されるstep functionの全件マッチング処理結果�
     - fail後にデータが変更されていないことを確認
       - root_jobs.jsonとdev2 mongo上の当該matchingResourceのrevisionに差分がないことを確認
     - 担当者に当該matchingResourceのexpandedデータを連携して確認依頼
-      - [cuisine.gitのtest_create_expand_resource.py](https://github.com/gachapin-pj/cuisine/blob/develop-day2/matching-processor/tests/test_create_expand_resource.py)で生成
+      - [cuisine.gitのtest_create_expand_resource.py](https://github.com/gachapin-pj/cuisine/blob/develop-day2/matching-processor/tests/test_create_expand_resource.py)を適宜編集してexpandedデータ出力
 
 ## 関連情報
 
