@@ -15,16 +15,18 @@ dailyで自動実行されるstep functionの全件マッチング処理結果�
       - 出力例
 
           ```txt
-          /tmp/check_matching_results check_matching_results.sh
-          Start download and parse daily batch result of 2025/02/11
-          download: s3://techkitchen-cuisine-development2/matching/batch/20250211_150347/result/0eda4d91-061f-4fed-aacc-48207b0ba4b3/SUCCEEDED_0.json to 20250211/0eda4d91-061f-4fed-aacc-48207b0ba4b3/SUCCEEDED_0.json
-          download: s3://techkitchen-cuisine-development2/matching/batch/20250211_150347/result/d7ef12e1-1408-4248-b927-ebe946cdb611/SUCCEEDED_0.json to 20250211/d7ef12e1-1408-4248-b927-ebe946cdb611/SUCCEEDED_0.json
-          Renamed /tmp/check_matching_results/20250211/0eda4d91-061f-4fed-aacc-48207b0ba4b3 to /tmp/check_matching_results/20250211/candidate
-          Renamed /tmp/check_matching_results/20250211/d7ef12e1-1408-4248-b927-ebe946cdb611 to /tmp/check_matching_results/20250211/enterprise
-          candidate  - Number of status 500 data: 4
-          enterprise - Number of status 500 data: 260
+          ~/ghq/github.com/toshihisa-okaneya-tokyo/check_matching_results git:(main) check_matching_results.sh
+          Start download and parse daily batch result of 2025/03/11
+          download: s3://techkitchen-cuisine-development2/matching/batch/20250311_150345/result/523ba50e-3b8b-4bfe-aa75-025d0f1ba3de/manifest.json to 523ba50e-3b8b-4bfe-aa75-025d0f1ba3de/manifest.json
+          download: s3://techkitchen-cuisine-development2/matching/batch/20250311_150345/result/e3488f56-7c81-4b0a-8a2c-5985b16ca6b5/manifest.json to e3488f56-7c81-4b0a-8a2c-5985b16ca6b5/manifest.json
+          download: s3://techkitchen-cuisine-development2/matching/batch/20250311_150345/result/523ba50e-3b8b-4bfe-aa75-025d0f1ba3de/SUCCEEDED_0.json to 523ba50e-3b8b-4bfe-aa75-025d0f1ba3de/SUCCEEDED_0.json
+          download: s3://techkitchen-cuisine-development2/matching/batch/20250311_150345/result/e3488f56-7c81-4b0a-8a2c-5985b16ca6b5/SUCCEEDED_0.json to e3488f56-7c81-4b0a-8a2c-5985b16ca6b5/SUCCEEDED_0.json
+          Renamed /tmp/check_matching_results/20250311/e3488f56-7c81-4b0a-8a2c-5985b16ca6b5 to /tmp/check_matching_results/20250311/enterprise
+          Renamed /tmp/check_matching_results/20250311/523ba50e-3b8b-4bfe-aa75-025d0f1ba3de to /tmp/check_matching_results/20250311/candidate
+          candidate  - Number of status 500 data: 0
+          enterprise - Number of status 500 data: 1
           End download and parse daily batch result successfully.
-          Detailed result is under /tmp/check_matching_results/20250211/
+          Detailed result is under /tmp/check_matching_results/20250311/
           ```
 
       - status 500のログを抽出したものは`/tmp/check_matching_results/{YYYYMMDD}`配下の`{resource_type}_{YYYYMMDD}.log`に出力される
